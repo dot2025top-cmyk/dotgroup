@@ -612,7 +612,7 @@ showPage('home');
       supabase.from('users').upsert({username: usernameVal, first_name: $('firstName').value, last_name: $('surname').value, email: $('email').value, whatsapp: $('whatsappCode').value + $('phone').value, country: $('country').value, sponsor_username: hasSponsorEl.value === 'yes' ? $('sponsorUsername').value.trim() : '', created_at: new Date().toISOString()}, {onConflict:'username'});
       supabase.from('spin_logs').insert({username: usernameVal, action: 'Registered from Spin', status: 'Completed'});
     }
-    setTimeout(()=>{ window.location.href = 'dospace.html'; }, 1200);
+    setTimeout(()=>{ window.location.href = 'login.html'; }, 1200);
   });
   fillDateDropdowns();
   loadCountries();
