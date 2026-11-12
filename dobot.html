@@ -201,7 +201,6 @@ function syncDcaProfile(user){
     localStorage.setItem('dot_user_'+(user.username||'').toUpperCase(), JSON.stringify(user));
   }catch(e){}
  }
- syncDcaProfile(newUser);
  function processRegInput(text){
  let f=flow.currentField;
  if(f==='first_name'){if(text.length<2){addMsg(`❌ First name too short`);return;} flow.data.first_name=text.trim(); askField('middle_name'); return;}
