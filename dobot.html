@@ -155,7 +155,53 @@ function askField(f){const map={first_name:"What is your first name? (You can ta
 function getUsersDB(){return JSON.parse(localStorage.getItem('dot_users_db')||'[]');}
 function isUsernameTaken(u){return getUsersDB().some(x=>x.username.toLowerCase()===u.toLowerCase());}
 function isEmailTaken(e){return getUsersDB().some(x=>x.email.toLowerCase()===e.toLowerCase());}
-function processRegInput(text){
+// ===== UPGRADE V7.3 - DCA-PROFILE BRIDGE - DO NOT REMOVE OLD CODE =====
+function getDcaProfiles(){
+  let out = [];
+  try{
+    let keys = ['dca-profile','dca_profiles','dcaProfile','dot_dca_profile','dca-profile-db'];
+    keys.forEach(k=>{
+      try{
+        let v = JSON.parse(localStorage.getItem(k)||'null');
+        if(Array.isArray(v)) out = out.concat(v);
+        else if(v && typeof v==='object') out.push(v);
+      }catch(e){}
+    });
+    out = out.concat(getUsersDB());
+    for(let i=0;i<localStorage.length;i++){
+      let k = localStorage.key(i);
+      if(k && k.startsWith('dot_user_')){
+        try{ let v = JSON.parse(localStorage.getItem(k)); if(v) out.push(v); }catch(e){}
+      }
+    }
+  }catch(e){}
+  return out;
+}
+function findDcaUser(username){
+  let u = (username||'').trim().toLowerCase();
+  if(!u) return null;
+  let all = getDcaProfiles();
+  return all.find(x=>{
+    let name = (x.username || x.user || x.username_choice || '').toString().toLowerCase();
+    let email = (x.email || '').toString().toLowerCase();
+    return name===u || email===u;
+  }) || null;
+}
+function syncDcaProfile(user){
+  try{
+    let users = getUsersDB();
+    if(!users.some(x=>(x.username||'').toLowerCase()===(user.username||'').toLowerCase())){
+      users.push(user); localStorage.setItem('dot_users_db', JSON.stringify(users));
+    }
+    let dca = JSON.parse(localStorage.getItem('dca-profile')||'[]');
+    if(!Array.isArray(dca)) dca=[dca];
+    if(!dca.some(x=>(x.username||x.user||'').toString().toLowerCase()===(user.username||'').toLowerCase())){
+      dca.push(user); localStorage.setItem('dca-profile', JSON.stringify(dca));
+    }
+    localStorage.setItem('dot_user_'+(user.username||'').toUpperCase(), JSON.stringify(user));
+  }catch(e){}
+ }
+ function processRegInput(text){
  let f=flow.currentField;
  if(f==='first_name'){if(text.length<2){addMsg(`❌ First name too short`);return;} flow.data.first_name=text.trim(); askField('middle_name'); return;}
  if(f==='middle_name'){flow.data.middle_name=text.toUpperCase()==='NIL'?'':text.trim(); askField('last_name'); return;}
