@@ -2,7 +2,10 @@ const SUPABASE_URL = 'https://adycwduqmsiisvsaidha.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_5YEiDpjh530pymNIw2j63g_zMHgIczk';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 console.log('✅ DOTGROUP Supabase Connected');
-
+const API_BASE = SUPABASE_URL;
+const supabaseClient = supabase;
+window.supabaseClient = supabaseClient;
+window.API_BASE = API_BASE;
 // ===== DOTGROUP AUTO SHORTENER =====
 // Full: peter.myshop.dotgroup.top -> Short: peter.myshop
 // Full: david.dobot.dotgroup.top -> Short: david.dobot
